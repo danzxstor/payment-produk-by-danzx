@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Fhkry</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: monospace;
+      background: black;
+      color: #cce6ff;
+      text-align: center;
+      overflow-x: hidden;
+    }
+    h1 {
+      font-size: 28px;
+      text-shadow: 0 0 15px #7b5cff;
+      margin-top: 20px;
+    }
+    .container {
+      margin-top: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* BOX */
+    .glow-box {
+      background: rgba(60, 0, 100, 0.3);
+      border: 2px solid #7b5cff;
+      border-radius: 12px;
+      padding: 12px;
+      margin: 10px auto;
+      width: 280px;
+      box-shadow: 0 0 20px #4dc3ff;
+      cursor: pointer;
+      transition: 0.25s;
+      color: #cce6ff;
+    }
+    .glow-box:hover {
+      background: rgba(100, 0, 200, 0.4);
+      transform: scale(1.05);
+    }
+
+    /* GAMBAR */
+    .main-img {
+      width: 200px;
+      height: auto;
+      border-radius: 12px;
+      margin: 10px auto;
+      box-shadow: 0 0 20px #4dc3ff;
+      display: block;
+    }
+    .popup-img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+      object-fit: cover;
+    }
+    .qris-img {
+      width: 220px;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #4dc3ff;
+      margin: 15px auto;
+      display: block;
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    /* BINTANG */
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+      opacity: 0.8;
+      animation: twinkle 3s infinite alternate, moveStars linear infinite;
+      z-index: 0;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.2; }
+      to { opacity: 1; }
+    }
+    @keyframes moveStars {
+      from { transform: translateY(0px); }
+      to { transform: translateY(100vh); }
+    }
+
+    /* POPUP */
+    .popup {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(15,15,40,0.5);
+      backdrop-filter: blur(4px);
+    }
+    .popup-content {
+      background: rgba(20,0,50,0.9);
+      border: 2px solid #7b5cff;
+      border-radius: 15px;
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      margin: 10% auto;
+      color: #cce6ff;
+      box-shadow: 0 0 25px #4dc3ff;
+      position: relative;
+      z-index: 11;
+    }
+    .close-btn {
+      margin-top: 15px;
+      background: #7b5cff;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      width: 100%;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .close-btn:hover {
+      background: #5b3fd1;
+    }
+
+    /* SPLASH SCREEN */
+    #splash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, #2b0066, #001f66);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      animation: fadeOut 1s ease forwards;
+      animation-delay: 2.5s;
+    }
+    .splash-content {
+      text-align: center;
+      color: #fff;
+      animation: zoomIn 1.5s ease;
+    }
+    .splash-content h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 15px #6145D8;
+    }
+    .splash-content p {
+      font-size: 20px;
+      color: #aaddff;
+    }
+    @keyframes zoomIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    .copy-btn {
+      background: linear-gradient(135deg, #7b5cff, #4dc3ff);
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(123, 92, 255, 0.5);
+    }
+    .copy-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(123, 92, 255, 0.8);
+    }
+    .copy-btn.copied {
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      box-shadow: 0 0 15px rgba(76, 175, 80, 0.8);
+    }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50px);
+    background: rgba(20, 0, 50, 0.95);
+    color: #cce6ff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: 2px solid #7b5cff;
+    box-shadow: 0 0 20px #4dc3ff;
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.4s ease;
+    text-align: center;
+    max-width: 280px;
+    font-size: 14px; /* Font size lebih kecil */
+    font-weight: normal; /* Font weight normal */
+  }
+  
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  
+  .toast.success {
+    border-color: #4CAF50;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.8);
+  }
+  
+  .toast.error {
+    border-color: #f44336;
+    box-shadow: 0 0 20px rgba(244, 67, 54, 0.8);
+  }
+  </style>
+</head>
+<body>
+
+  <!-- SPLASH SCREEN -->
+  <div id="splash">
+    <div class="splash-content">
+      <h1>Hallo!! Welcome To</h1>
+      <p> Payment x Produk Danzx</p>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Partikel bintang -->
+  <div class="stars" id="stars"></div>
+
+  <h1>Danzx Payment/Produk</h1>
+  <div class="container">
+    <!-- LOGO UTAMA -->
+    <img src="https://files.catbox.moe/7hluu4.jpg" alt="DANZX STORE" class="main-img">
+
+    <!-- QRIS -->
+    <div class="glow-box" onclick="openPopup('popupQris')">📷 QRIS [ CLICK ]</div>
+
+    <!-- DANA -->
+    <div class="glow-box">
+      DANA: <span id="dana">082261115732</span>
+      <button class="copy-btn" data-text="082261115732">Copy</button>
+    </div>
+    
+    <!-- GOPAY -->
+    <div class="glow-box">
+      GOPAY: <span id="gopay">Tidak Tersedia</span>
+      <button class="copy-btn" data-text="Tidak Tersedia">Copy</button>
+    </div>
+    
+    <!-- OVO -->
+    <div class="glow-box">
+      OVO: <span id="ovo">Tidak Tersedia</span>
+      <button class="copy-btn" data-text="Tidak Tersedia">Copy</button>
+    </div>
+
+    <p>Seluruh Pembayaran Atas Nama: <b style="color:#f3f4f6"><br>dhaniel012</b></p>
+
+    <!-- Produk -->
+    <div class="glow-box" onclick="openPopup('popupPanel')">Panel Unli Pirv<br> Rp5.000</div>
+    <div class="glow-box" onclick="openPopup('popupAdmin')">Admin Panel<br> Rp10.000</div>
+    <div class="glow-box" onclick="openPopup('popupOwnerPanel')">Owner Panel<br> Rp15.000</div>
+    <div class="glow-box" onclick="openPopup('popupScriptPushkon')">Script Pushkontak<br> Rp20.000</div>
+    <div class="glow-box" onclick="openPopup('popupScriptSelf'')">Script Selfbot V2<br> Rp25.000</div>
+    <div class="glow-box" onclick="openPopup('popupJasa')">Jasa Bikin Website Payment/Produk<br> Rp10.000</div>
+  </div>
+
+  <!-- POPUP QRIS -->
+  <div class="popup" id="popupQris">
+    <div class="popup-content">
+      <h2>📷 Scan QRIS</h2>
+      <img class="qris-img" src="https://files.catbox.moe/n18u1e.jpg" alt="QRIS Code">
+      <p>Scan QRIS di atas untuk pembayaran.</p>
+      <button class="close-btn" onclick="closePopup('popupQris')">Tutup</button>
+    </div>
+  </div>
+
+  <!-- POPUP PANEL -->
+  <div class="popup" id="popupPanel">
+    <div class="popup-content">
+      <h2>Panel Unli</h2>
+      <img src="https://files.catbox.moe/7hluu4.jpg" alt="Panel Danzx" class="popup-img">
+      <h3 style="color:#f3f4f6">Danzx</h3>
+      <p style="color:#d1d5db">BENEFIT: <br> ☇ Anti Delay <br> ☇ Anti Lag <br> ☇ Aktif 1 Bulan <br> ☇ Anti Intip <br> ☇ Script Aman Terjamin <br> ☇ Garansi? 10Hari </p>
+      <button class="close-btn" onclick="closePopup('popupPanel')">Tutup</button>
+    </div>
+  </div>
+
+  <!-- POPUP ADMIN PANEL -->
+  <div class="popup" id="popupAdmin">
+    <div class="popup-content">
+      <h2>ADMIN PANEL</h2>
+      <p style="color:#d1d5db">BENEFIT JOIN: <br> ☇ Bisa Jual Resseler <br> ☇ Bebas Create Panel <br> ☇ Anti Intip <br> ☇ Script Aman Terjamin <br> ☇ Anti PT PT </p
+      <button class="close-btn" onclick="closePopup('popupAdmin')">Tutup</button>
+    </div>
+  </div>
+  
+  <!-- POPUP OWNER PANEL -->
+  <div class="popup" id="popupOwnerPanel">
+    <div class="popup-content">
+      <h2>🛒 Owner Panel</h2>
+      <p style="color:#d1d5db">BENEFIT JOIN: <br> ☇ Bisa Jual Admin panel <br> ☇ Bisa Jual Resseler <br> ☇ Bebas Create Panel <br> ☇ Anti Intip <br> ☇ Script Aman Terjamin <br> ☇ Anti PT PT </p>
+      <button class="close-btn" onclick="closePopup('popupOwnerPanel')">Tutup</button>
+    </div>
+  </div>
+  
+  <!-- POPUP SCRIPT PUSHKONTAK -->
+  <div class="popup" id="popupScriptPushkon">
+    <div class="popup-content">
+      <h2>📦 Script Pushkontak</h2>
+      <p style="color:#d1d5db">BENEFIT LIST: Priview Fitur? Pm Admin </p>
+      <button class="close-btn" onclick="closePopup('popupScriptPushkon')">Tutup</button>
+    </div>
+  </div>
+  
+  <!-- POPUP SCRIPT SELFBOT -->
+  <div class="popup" id="popupScriptSelf">
+    <div class="popup-content">
+      <h2>📦 Script Selfbot V3</h2>
+      <p style="color:#d1d5db">BENEFIT LIST: <br> ☇ Akses Website Database <br><br> ☇ Priview Fitur? Pv Admin </p>
+      <button class="close-btn" onclick="closePopup('popupScriptSelf')">Tutup</button>
+    </div>
+  </div>
+
+  <!-- POPUP JASA BIKIN WEB PAYMENT/PRODUK -->
+  <div class="popup" id="popupJasa">
+    <div class="popup-content">
+      <h2>JASA BIKIN WEBSITE</h2>
+      <p style="color:#d1d5db">
+       ALL BENEFIT <br>
+       SILAHKAN HUBUNGI OWNER LANGSUNG
+      <br><br><i>" https://wa.me/6285355824635."</i></p>
+      <button class="close-btn" onclick="closePopup('popupJasa')">Tutup</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    &copy; Danzx Store
+  </div>
+
+  <script>
+    for (let i = 0; i < 200; i++) {
+      let star = document.createElement("div");
+      star.className = "star";
+      let size = Math.random() * 3 + "px";
+      star.style.width = size;
+      star.style.height = size;
+      star.style.top = Math.random() * window.innerHeight + "px";
+      star.style.left = Math.random() * window.innerWidth + "px";
+      star.style.animationDuration = (Math.random() * 10 + 5) + "s"; // 5–15 detik
+      document.body.appendChild(star);
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("Nomor " + text + " berhasil disalin!", "success");
+      }).catch(err => {
+        console.error('Gagal menyalin teks: ', err);
+        showToast("Gagal menyalin nomor!", "error");
+      });
+    }
+
+    function showToast(message, type = "info") {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.className = "toast";
+      
+      if (type === "success") {
+        toast.classList.add("success");
+      }
+      
+      toast.classList.add("show");
+      
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const copyButtons = document.querySelectorAll('.copy-btn');
+      
+      copyButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const textToCopy = this.getAttribute('data-text');
+          copyText(textToCopy);
+          
+          // Animasi tombol
+          this.classList.add('copied');
+          this.textContent = '✓ Disalin';
+          
+          setTimeout(() => {
+            this.classList.remove('copied');
+            this.textContent = 'Copy';
+          }, 2000);
+        });
+      });
+    });
+
+    // Popup function
+    function openPopup(id) {
+      document.getElementById(id).style.display = "block";
+    }
+    function closePopup(id) {
+      document.getElementById(id).style.display = "none";
+    }
+  </script>
+</body>
+</html>
